@@ -54,7 +54,6 @@ exports.getUser = async (req, res) => {
         return res.status(401).json({error:"User Not Signedin"});
     }
     var userdetails = await User.findById(user);
-    // const token = user.generateToken();
     return res.status(200).json(userdetails)
 
     // sendCookie(user, 201, res);

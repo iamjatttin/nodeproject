@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express();
 
-const {upload} = require("../utils/uploadFiles")
-
+const {upload} = require("../middlewares/uploadFiles")
 const { isAuthenticated } = require('../middlewares/auth');
 const { newChat,homeIndex,uploadFile } = require('../controllers/homeController');
 const { signupUser,loginUser,getUser } = require('../controllers/userController');

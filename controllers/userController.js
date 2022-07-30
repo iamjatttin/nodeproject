@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Question = require('../models/questionModel');
 const sendCookie = require('../utils/sendCookie');
 
 exports.signupUser = async (req, res) => {
@@ -19,16 +20,16 @@ exports.signupUser = async (req, res) => {
     })
 
     const token = newUser.generateToken();
-    return res.status(201).json({ token: token })
+    return res.status(201).json({ token: token,user: newUser })
 
     // sendCookie(newUser, 201, res);
 };
 exports.loginUser = async (req, res) => {
 
-    const { email, password } = req.body;
-
+    const { userId, password } = req.body;
+    console.log(req.body);
     const user = await User.findOne({
-        $or: [{ email: email }]
+        $or: [{ email: userId }]
     }).select("+password");
 
     if (!user) {
@@ -42,20 +43,51 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = user.generateToken();
-    return res.status(201).json({ token: token })
+    return res.status(201).json({ token: token,user:user })
 
     // sendCookie(user, 201, res);
 };
 exports.getUser = async (req, res) => {
 
-    var user = req.user;
+    var userid = req.user;
 
-    if (!user) {
+    if (!userid) {
         return res.status(401).json({error:"User Not Signedin"});
     }
-    var userdetails = await User.findById(user);
-    return res.status(200).json(userdetails)
+        var user = await User.findById(userid);
+        console.log(user)
+        return res.status(200).json({user:user})
 
     // sendCookie(user, 201, res);
+};
+exports.getallUser = async (req, res) => {
+
+        var userdetails = await User.find();
+        return res.status(200).json(userdetails)
+
+    // sendCookie(user, 201, res);
+};
+exports.getallquestions = async (req, res) => {
+
+    var question = await Question.find();
+    return res.status(200).json({question})
+
+// sendCookie(user, 201, res);
+};
+exports.updatescore = async (req, res) => {
+    var userid = req.user
+    console.log(req.body)
+    User.findByIdAndUpdate(userid, { score: req.body.Score },
+                            function (err, docs) {
+    if (err){
+        console.log(err)
+    }
+    else{
+        console.log("Updated User : ", docs);
+    }})
+    var user = await User.findById(userid);
+    // console.log(user)
+    return res.status(200).json({user:user})
+// sendCookie(user, 201, res);
 };
 
